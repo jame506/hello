@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body{
+        background-color: black;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+      }
+      .but_moves{
+        background-color: transparent;
+        border-radius: 50%;
+        border:3px solid white;
+        padding:6%;
+        margin-right: 10px;
+        cursor:pointer;
+      }
+      .img_moves{
+        height: 50px;
+      }
+      .img_moves_icons{
+        height: 50px;
+      }
+      .but_reset{
+        margin-top:20px;
+        padding:20px;
+        font-size: 15px;
+        font-weight: bold;        
+
+      }
+    </style>
+  </head>
+  <body>
+
+   <button class="but_moves" onclick="f_button_clicked('Rock')"><img class="img_moves" src="png/RockPaperScissors/Rock-emoji.png"></button>
+   <button class="but_moves" onclick="f_button_clicked('Paper')"><img class="img_moves" src="png/RockPaperScissors/Paper-emoji.png"></button>
+   <button class="but_moves" onclick="f_button_clicked('Scissors')"><img class="img_moves" src="png/RockPaperScissors/Scissors-emoji.png"></button>
+   <button class="but_reset" onclick="f_button_reset()">Score Reset</button>
+
+   <p class="js_score"></p>
+   <p class="js_result"></p>
+   <p class="js_moves"></p>
+
+      
+    <script>
+      
+      let objScore = JSON.parse(localStorage.getItem('objScore'))||{        
+        win: 0,
+        lose: 0,
+        tie: 0}  
+
+      f_loadScore();
+
+      function f_loadScore(){        
+        objScore = JSON.parse(localStorage.getItem('objScore'));
+        document.querySelector('.js_score').innerHTML= `Win: ${objScore.win} Lose: ${objScore.lose} Tie: ${objScore.tie}`;
+        return 0;
+      }
+      function f_saveScore(objScore){
+        localStorage.setItem('objScore', JSON.stringify(objScore));
+        return 0;
+      }
+
+      function f_button_clicked(str_playerMove){
+
+        let objScore = JSON.parse(localStorage.getItem('objScore'))||{
+          win: 0,
+          lose: 0,
+          tie: 0}  
+
+        const str_computerMove = str_generateRandomMove();
+        
+        const rules={
+          Rock:     {Rock:'tie',Scissors:'win',Paper:'lose'},
+          Scissors: {Rock:'lose',Scissors:'tie',Paper:'win'},
+          Paper:    {Rock:'win',Scissors:'lose',Paper:'tie'}
+        }
+        const str_result=(rules[str_playerMove][str_computerMove]);
+        f_result(str_result);
+        f_moves(str_playerMove,str_computerMove);
+        
+        switch (str_result){
+          case ('win'): objScore.win++; break;
+          case ('lose'):objScore.lose++; break;
+          case ('tie'): objScore.tie++; break;
+        }        
+ 
+        f_saveScore(objScore);
+        f_loadScore();
+
+        return 0;
+
+      }
+      function str_generateRandomMove(){
+        const moves=['Rock','Scissors','Paper'];        
+        return moves[Math.floor(Math.random()*moves.length)];
+        return 0;
+      }
+
+      function f_result(str_result){
+        document.querySelector('.js_result').innerHTML=`You ${str_result}`;
+        return 0;
+      }
+
+      function f_moves(str_playerMove, str_computerMove){        
+        document.querySelector('.js_moves').innerHTML=`
+        You: <img class="img_moves_icons" src="png/RockPaperScissors/${str_playerMove}-emoji.png">
+        Computer <img class="img_moves_icons" src="png/RockPaperScissors/${str_computerMove}-emoji.png">`;
+        return 0;
+      }
+
+      function f_button_reset(){
+
+        let objScore = {
+          win: 0,
+          lose: 0,
+          tie: 0}  
+
+          f_saveScore(objScore);
+          f_loadScore();
+          document.querySelector('.js_result').innerHTML="";
+          document.querySelector('.js_moves').innerHTML="";
+          return 0;
+      }      
+    </script>
+  </body>
+  
+</html>
